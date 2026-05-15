@@ -3,50 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cut the Rope - Selector</title>
+    <title>Cut the Rope - Ultimate Selector</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 50px; }
-        .card-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .card { 
-            background: #2d2d2d; border: 1px solid #444; padding: 20px; border-radius: 10px; width: 250px;
-            transition: transform 0.2s;
-        }
-        .card:hover { transform: translateY(-50px); border-color: #4CAF50; }
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        #header { background: #1f1f1f; padding: 15px; display: flex; gap: 15px; justify-content: center; border-bottom: 2px solid #333; }
         button { 
-            background: #4CAF50; color: white; border: none; padding: 10px 20px; 
-            border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px;
+            padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; 
+            font-weight: bold; background: #3d3d3d; color: white; transition: 0.3s;
         }
-        .warning { color: #ff9800; font-size: 0.8em; margin-top: 5px; }
+        button:hover { background: #505050; transform: scale(1.05); }
+        button.active { background: #659729; } /* Om Nom Green */
+        #container { flex-grow: 1; background: #000; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .fullscreen-btn { background: #2196F3; position: absolute; bottom: 20px; right: 20px; }
     </style>
 </head>
 <body>
-    <h1>Select Version</h1>
-    <div class="card-container">
-        <div class="card">
-            <h3>Mirror 1</h3>
-            <p>CrazyGames Version</p>
-            <button onclick="window.open('https://cut-the-rope-ebx.game-files.crazygames.com/cut-the-rope-ebx/2/index.html', '_blank')">Open in New Tab</button>
-            <p class="warning">CORS prevents Iframe use</p>
-        </div>
 
-        <div class="card">
-            <h3>Mirror 2</h3>
-            <p>Famobi Wrapper</p>
-            <button onclick="loadIframe('https://play.famobi.com/wrapper/cut-the-rope/A1000-10')">Load Here</button>
-        </div>
+    <div id="header">
+        <button onclick="loadGame(this, 'https://yell0wsuit.github.io/cuttherope-h5dx/')">PC (H5DX Version)</button>
+        <button onclick="loadGame(this, 'https://yell0wsuit.page/assets/games/CutTheRope/index.html')">Mobile (Original Assets)</button>
     </div>
 
-    <div id="game-area" style="margin-top: 30px; display: none;">
-        <iframe id="game-frame" width="800" height="600" src="" frameborder="0" allowfullscreen></iframe>
+    <div id="container">
+        <iframe id="game-frame" src="about:blank"></iframe>
+        <button class="fullscreen-btn" onclick="goFullscreen()">Fullscreen</button>
     </div>
 
     <script>
-        function loadIframe(url) {
-            const area = document.getElementById('game-area');
+        function loadGame(btn, url) {
+            // Update active state
+            document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
             const frame = document.getElementById('game-frame');
-            area.style.display = 'block';
+            
+            // Bypass logic: if it's the .page link, we might need to open in a new tab 
+            // if the iframe is blocked. Testing direct load first.
             frame.src = url;
-            area.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function goFullscreen() {
+            const elem = document.getElementById("container");
+            if (elem.requestFullscreen) { elem.requestFullscreen(); }
+            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+            else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
         }
     </script>
 </body>
