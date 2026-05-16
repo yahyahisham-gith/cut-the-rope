@@ -58,6 +58,7 @@
             background-color: var(--accent-color);
         }
 
+        /* Styling for the redirect buttons */
         .external-btn {
             background-color: #d35400;
         }
@@ -65,7 +66,6 @@
             background-color: #e67e22;
         }
 
-        /* FIX: Use viewport height minus the header space to guarantee it fills the screen */
         #game-container {
             width: 100vw;
             height: calc(100vh - 75px); 
@@ -74,7 +74,6 @@
             box-sizing: border-box;
         }
 
-        /* FIX: Absolute positioning forces the iframe to expand completely inside the container */
         iframe {
             position: absolute;
             top: 0;
@@ -98,13 +97,13 @@
 <body>
 
     <div id="controls">
-        <button onclick="loadSource(this, 'https://ctrhome.github.io/CutTheRope-FirefoxOS/')">FirefoxOS Version</button>
-        <button onclick="loadSource(this, 'https://yell0wsuit.github.io/cuttherope-h5dx/')">PC (H5DX)</button>
-        <button onclick="loadSource(this, 'https://play.famobi.com/wrapper/cut-the-rope/A1000-10')">Famobi Wrapper</button>
-        <button onclick="loadSource(this, 'https://play.famobi.com/cut-the-rope')">Famobi Direct</button>
-        <button onclick="loadSource(this, 'https://cut-the-rope-ebx.game-files.crazygames.com/cut-the-rope-ebx/2/index.html')">CrazyGames</button>
+        <button class="external-btn" onclick="handleNavigation(this, 'https://ctrhome.github.io/CutTheRope-FirefoxOS/', true)">FirefoxOS Version ↗</button>
+        <button class="external-btn" onclick="handleNavigation(this, 'https://yell0wsuit.page/assets/games/CutTheRope/index.html', true)">Mobile Version ↗</button>
         
-        <button class="external-btn" onclick="window.open('https://yell0wsuit.page/assets/games/CutTheRope/index.html', '_blank')">Mobile Version ↗</button>
+        <button onclick="handleNavigation(this, 'https://yell0wsuit.github.io/cuttherope-h5dx/', false)">PC (H5DX)</button>
+        <button onclick="handleNavigation(this, 'https://play.famobi.com/wrapper/cut-the-rope/A1000-10', false)">Famobi Wrapper</button>
+        <button onclick="handleNavigation(this, 'https://play.famobi.com/cut-the-rope', false)">Famobi Direct</button>
+        <button onclick="handleNavigation(this, 'https://cut-the-rope-ebx.game-files.crazygames.com/cut-the-rope-ebx/2/index.html', false)">CrazyGames</button>
         
         <button onclick="toggleFullscreen()" class="fs-btn">Fullscreen</button>
         <span class="status" id="current-url">Ready</span>
@@ -118,13 +117,31 @@
         const frame = document.getElementById('game-frame');
         const statusText = document.getElementById('current-url');
 
-        function loadSource(btn, url) {
+        function handleNavigation(btn, url, isExternal) {
+            // Manage button active states cleanly
             document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             const secureUrl = url.replace("http://", "https://");
-            frame.src = secureUrl;
-            statusText.textContent = "Source: " + secureUrl;
+
+            if (isExternal) {
+                // Clear the iframe so a previous game session isn't running or wasting system resources
+                frame.src = "about:blank";
+                statusText.textContent = "Redirected to: " + secureUrl;
+                
+                // Safe execution context for modern browser pop-up handlers
+                const newWindow = window.open(secureUrl, '_blank');
+                if (newWindow) {
+                    newWindow.focus();
+                } else {
+                    // Fail-safe if the browser environment is locked down tight
+                    alert("Pop-up blocker intercepted the redirect. Please allow pop-ups for this site or click the link manually.");
+                }
+            } else {
+                // Embed normally into the full-size layout container
+                frame.src = secureUrl;
+                statusText.textContent = "Source: " + secureUrl;
+            }
         }
 
         function toggleFullscreen() {
@@ -138,9 +155,10 @@
             }
         }
 
+        // Set PC (H5DX) as the auto-loading base since the others are now external redirects
         window.addEventListener('DOMContentLoaded', () => {
-            const firstBtn = document.querySelector('button');
-            if (firstBtn) firstBtn.click();
+            const defaultBtn = document.querySelector('button[onclick*="h5dx"]');
+            if (defaultBtn) defaultBtn.click();
         });
     </script>
 </body>
