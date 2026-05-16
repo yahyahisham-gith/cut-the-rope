@@ -12,12 +12,11 @@
             --accent-color: #659729; /* Om Nom Green */
         }
 
-        /* Force the entire page to lock to full window size */
         body, html {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -35,7 +34,8 @@
             align-items: center;
             border-bottom: 2px solid #444;
             flex-wrap: wrap;
-            flex-shrink: 0; /* Prevents the control bar from shrinking */
+            height: auto;
+            box-sizing: border-box;
         }
 
         button {
@@ -65,23 +65,24 @@
             background-color: #e67e22;
         }
 
-        /* FIX: Force container to expand and take up all remaining vertical space */
+        /* FIX: Use viewport height minus the header space to guarantee it fills the screen */
         #game-container {
-            flex-grow: 1;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: calc(100vh - 75px); 
             position: relative;
             background: #000;
-            display: flex;
+            box-sizing: border-box;
         }
 
-        /* FIX: Force the iframe to occupy 100% width and height of the container */
+        /* FIX: Absolute positioning forces the iframe to expand completely inside the container */
         iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             border: none;
             display: block;
-            flex-grow: 1;
         }
 
         .status {
